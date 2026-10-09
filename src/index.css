@@ -133,26 +133,55 @@ html, body, #root {
   gap: 1rem;
 }
 
-/* Brand — restrained, no glass, no glow */
+/* Brand header identity */
 .brand {
   display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity var(--duration-fast) var(--ease);
+}
+
+.brand:hover {
+  opacity: 0.95;
+}
+
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.45));
+  transition: transform var(--duration-normal) var(--ease),
+              filter var(--duration-normal) var(--ease);
+}
+
+.brand:hover .brand-logo {
+  transform: rotate(20deg) scale(1.08);
+  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.75));
+}
+
+.brand-text {
+  display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
 }
 
 .brand-title {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-primary);
+  line-height: 1.1;
 }
 
 .brand-subtitle {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);

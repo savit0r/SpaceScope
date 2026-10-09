@@ -49,9 +49,24 @@ export const ControlsOverlay: React.FC = () => {
     <div className="ui-layer">
       {/* Top Header — minimal branding + utility controls (§8) */}
       <header className="header-bar">
-        <div className="brand ui-interactive">
-          <span className="brand-title">SpaceScope</span>
-          <span className="brand-subtitle">Solar System Explorer</span>
+        <div
+          className="brand ui-interactive"
+          onClick={resetCamera}
+          title="Reset camera to system overview"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              resetCamera();
+            }
+          }}
+        >
+          <img src="/logo.svg" alt="SpaceScope Logo" className="brand-logo" />
+          <div className="brand-text">
+            <span className="brand-title">SpaceScope</span>
+            <span className="brand-subtitle">Solar System Explorer</span>
+          </div>
         </div>
 
         <div className="header-right-actions">
