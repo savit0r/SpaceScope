@@ -12,6 +12,8 @@ import {
   Search,
   Settings,
   Disc,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useSimulation } from '../../context/SimulationContext';
 import { useSelection } from '../../context/SelectionContext';
@@ -41,9 +43,22 @@ export const ControlsOverlay: React.FC = () => {
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
 
   const speedOptions = [1, 5, 10, 30, 60];
   const currentDate = simulatedDaysToDate(simulatedDays);
+
+  const [prevSelectedPlanetId, setPrevSelectedPlanetId] = useState<string | null>(null);
+
+  // Auto-collapse timeline controls on mobile viewports when a new planet is selected
+  if (selectedPlanet && selectedPlanet.id !== prevSelectedPlanetId) {
+    setPrevSelectedPlanetId(selectedPlanet.id);
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      setIsControlsCollapsed(true);
+    }
+  } else if (!selectedPlanet && prevSelectedPlanetId !== null) {
+    setPrevSelectedPlanetId(null);
+  }
 
   return (
     <div className="ui-layer">
@@ -78,7 +93,7 @@ export const ControlsOverlay: React.FC = () => {
             title="Search planets, moons, and missions"
           >
             <Search />
-            <span>Search</span>
+            <span className="btn-label">Search</span>
           </button>
 
           {/* Settings Button (§8, §35) */}
@@ -89,7 +104,7 @@ export const ControlsOverlay: React.FC = () => {
             title="Calibrate scale, orbits, and quality"
           >
             <Settings />
-            <span>Settings</span>
+            <span className="btn-label">Settings</span>
           </button>
 
           {/* Compare toggle */}
@@ -100,7 +115,7 @@ export const ControlsOverlay: React.FC = () => {
             title="Compare two planets side-by-side"
           >
             <Scale />
-            <span>Compare</span>
+            <span className="btn-label">Compare</span>
           </button>
 
           {/* Asteroid Belt toggle (NASA Eyes) */}
@@ -111,7 +126,7 @@ export const ControlsOverlay: React.FC = () => {
             title="Toggle Asteroid Belt & Major Asteroids (NASA Eyes)"
           >
             <Disc />
-            <span>Asteroids</span>
+            <span className="btn-label">Asteroids</span>
           </button>
 
           {/* Scale mode indicator badge (§24) */}
@@ -140,103 +155,140 @@ export const ControlsOverlay: React.FC = () => {
       {/* Footer — Controls left, Planet info right (§7, §23) */}
       <footer className="footer-layout">
         {/* Simulation Controls */}
-        <div className="controls-panel ui-interactive">
+        <div className={`controls-panel ui-interactive ${isControlsCollapsed ? 'collapsed' : ''}`}>
           <div className="controls-panel-header">
-            <span className="controls-panel-title">Timeline</span>
-          </div>
-
-          {/* Timeline Scrubber */}
-          <div className="timeline-scrubber">
-            <div className="scrubber-header">
-              <span className="scrubber-label">5-Year Range</span>
-              <span className="scrubber-days">+{Math.round(simulatedDays)}d</span>
+            <div className="controls-header-left">
+              <span className="controls-panel-title">Timeline</span>
+              <span className="controls-mobile-date">{formatSimulatedDate(currentDate)}</span>
             </div>
-            <input
-              type="range"
-              min={0}
-              max={1825}
-              step={1}
-              value={Math.round(simulatedDays)}
-              onChange={(e) => setSimulatedDays(Number(e.target.value))}
-              className="timeline-slider"
-              aria-label="Timeline scrubber"
-            />
-          </div>
-
-          {/* Play / Pause / Reset */}
-          <div className="btn-group">
             <button
-              className={`ctrl-btn ${isPlaying ? 'active' : ''}`}
-              onClick={togglePlay}
-              title={isPlaying ? 'Pause' : 'Play'}
+              className="collapse-toggle-btn ui-interactive"
+              onClick={() => setIsControlsCollapsed(!isControlsCollapsed)}
+              aria-label={isControlsCollapsed ? 'Expand timeline controls' : 'Collapse timeline controls'}
+              title={isControlsCollapsed ? 'Expand timeline controls' : 'Collapse timeline controls'}
             >
-              {isPlaying ? <Pause /> : <Play />}
-              {isPlaying ? 'Pause' : 'Play'}
-            </button>
-            <button
-              className="ctrl-btn"
-              onClick={resetSimulation}
-              title="Reset to Jan 1, 2026"
-            >
-              <RotateCcw />
-              Reset
+              {isControlsCollapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
           </div>
 
-          {/* Speed selector */}
-          <div className="speed-selector">
-            <span className="speed-label">Speed</span>
-            <div className="speed-pills">
-              {speedOptions.map((option) => (
+          {isControlsCollapsed ? (
+            <div className="collapsed-controls-row">
+              <button
+                className={`mini-play-btn ${isPlaying ? 'active' : ''}`}
+                onClick={togglePlay}
+                title={isPlaying ? 'Pause' : 'Play'}
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+              >
+                {isPlaying ? <Pause size={13} /> : <Play size={13} />}
+              </button>
+              <input
+                type="range"
+                min={0}
+                max={1825}
+                step={1}
+                value={Math.round(simulatedDays)}
+                onChange={(e) => setSimulatedDays(Number(e.target.value))}
+                className="timeline-slider mini-slider"
+                aria-label="Timeline scrubber"
+              />
+              <span className="mini-days">+{Math.round(simulatedDays)}d</span>
+            </div>
+          ) : (
+            <div className="controls-panel-body">
+              {/* Timeline Scrubber */}
+              <div className="timeline-scrubber">
+                <div className="scrubber-header">
+                  <span className="scrubber-label">5-Year Range</span>
+                  <span className="scrubber-days">+{Math.round(simulatedDays)}d</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={1825}
+                  step={1}
+                  value={Math.round(simulatedDays)}
+                  onChange={(e) => setSimulatedDays(Number(e.target.value))}
+                  className="timeline-slider"
+                  aria-label="Timeline scrubber"
+                />
+              </div>
+
+              {/* Play / Pause / Reset */}
+              <div className="btn-group">
                 <button
-                  key={option}
-                  className={`pill-btn ${speed === option ? 'active' : ''}`}
-                  onClick={() => setSpeed(option)}
+                  className={`ctrl-btn ${isPlaying ? 'active' : ''}`}
+                  onClick={togglePlay}
+                  title={isPlaying ? 'Pause' : 'Play'}
                 >
-                  {option}×
+                  {isPlaying ? <Pause /> : <Play />}
+                  {isPlaying ? 'Pause' : 'Play'}
                 </button>
-              ))}
+                <button
+                  className="ctrl-btn"
+                  onClick={resetSimulation}
+                  title="Reset to Jan 1, 2026"
+                >
+                  <RotateCcw />
+                  Reset
+                </button>
+              </div>
+
+              {/* Speed selector */}
+              <div className="speed-selector">
+                <span className="speed-label">Speed</span>
+                <div className="speed-pills">
+                  {speedOptions.map((option) => (
+                    <button
+                      key={option}
+                      className={`pill-btn ${speed === option ? 'active' : ''}`}
+                      onClick={() => setSpeed(option)}
+                    >
+                      {option}×
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Camera reset */}
+              <button
+                className="ctrl-btn"
+                style={{ width: '100%' }}
+                onClick={resetCamera}
+              >
+                <Video />
+                Reset View
+              </button>
+
+              {/* Navigation hints */}
+              <div className="nav-controls">
+                <span className="nav-controls-title">Navigation</span>
+                <div className="controls-list">
+                  <div className="control-item">
+                    <span className="control-key">
+                      <MousePointer /> Click Planet
+                    </span>
+                    <span className="control-action">Select</span>
+                  </div>
+                  <div className="control-item">
+                    <span className="control-key">
+                      <Move /> Drag
+                    </span>
+                    <span className="control-action">Orbit</span>
+                  </div>
+                  <div className="control-item">
+                    <span className="control-key">
+                      <ZoomIn /> Scroll
+                    </span>
+                    <span className="control-action">Zoom</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="disclaimer">
+                Educational Model — Circular Keplerian Mean Anomaly
+              </div>
             </div>
-          </div>
-
-          {/* Camera reset */}
-          <button
-            className="ctrl-btn"
-            style={{ width: '100%' }}
-            onClick={resetCamera}
-          >
-            <Video />
-            Reset View
-          </button>
-
-          {/* Navigation hints */}
-          <div className="nav-controls">
-            <span className="nav-controls-title">Navigation</span>
-            <div className="controls-list">
-              <div className="control-item">
-                <span className="control-key">
-                  <MousePointer /> Click Planet
-                </span>
-                <span className="control-action">Select</span>
-              </div>
-              <div className="control-item">
-                <span className="control-key">
-                  <Move /> Drag
-                </span>
-                <span className="control-action">Orbit</span>
-              </div>
-              <div className="control-item">
-                <span className="control-key">
-                  <ZoomIn /> Scroll
-                </span>
-                <span className="control-action">Zoom</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="disclaimer">
-            Educational Model — Circular Keplerian Mean Anomaly
-          </div>
+          )}
         </div>
 
         {/* Planet Information Panel (§9, §29, §42) */}

@@ -22,12 +22,11 @@ export const OrbitPath: React.FC<OrbitPathProps> = ({
 }) => {
   const { selectedPlanet } = useSelection();
 
-  if (radius <= 0) return null;
-
   const isSelected = planet && selectedPlanet?.id === planet.id;
 
   // Calculate 192 smooth Keplerian orbital ellipse points
   const points = useMemo(() => {
+    if (radius <= 0) return [];
     const pts: THREE.Vector3[] = [];
     const segments = 192;
     for (let i = 0; i <= segments; i++) {
@@ -40,6 +39,8 @@ export const OrbitPath: React.FC<OrbitPathProps> = ({
   const geometry = useMemo(() => {
     return new THREE.BufferGeometry().setFromPoints(points);
   }, [points]);
+
+  if (radius <= 0) return null;
 
   // Planet signature color for selected orbit
   const orbitColor = isSelected && planet?.visualProperties.color

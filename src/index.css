@@ -81,6 +81,7 @@
 html, body, #root {
   width: 100%;
   height: 100%;
+  height: 100dvh;
   overflow: hidden;
   background-color: var(--space-950);
   font-family: var(--font-body);
@@ -88,6 +89,7 @@ html, body, #root {
   user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* --------------------------------------------------------------------------
@@ -96,10 +98,12 @@ html, body, #root {
 .canvas-container {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
+  touch-action: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -111,12 +115,14 @@ html, body, #root {
   left: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
   z-index: 10;
   pointer-events: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.25rem 1.5rem;
+  padding: max(1rem, env(safe-area-inset-top, 1rem)) max(1.25rem, env(safe-area-inset-right, 1.25rem)) max(1rem, env(safe-area-inset-bottom, 1rem)) max(1.25rem, env(safe-area-inset-left, 1.25rem));
+  box-sizing: border-box;
 }
 
 .ui-interactive {
@@ -305,6 +311,95 @@ html, body, #root {
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--line);
+}
+
+.controls-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.controls-mobile-date {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.collapse-toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.collapse-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.controls-panel.collapsed {
+  padding: 0.65rem 0.85rem;
+}
+
+.controls-panel.collapsed .controls-panel-header {
+  margin-bottom: 0;
+  padding-bottom: 0.4rem;
+}
+
+.collapsed-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.45rem;
+}
+
+.mini-play-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.mini-play-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text-primary);
+}
+
+.mini-play-btn.active {
+  background: rgba(143, 216, 255, 0.15);
+  color: var(--accent);
+  border-color: rgba(143, 216, 255, 0.35);
+}
+
+.mini-slider {
+  flex: 1;
+  min-width: 70px;
+}
+
+.mini-days {
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .controls-panel-title {
@@ -936,6 +1031,8 @@ html, body, #root {
   font-family: var(--font-heading);
   font-weight: 500;
   color: var(--text-primary);
+  min-width: 0;
+  word-break: break-word;
 }
 
 .planet-a-val {
@@ -955,6 +1052,8 @@ html, body, #root {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
+  min-width: 0;
+  word-break: break-word;
 }
 
 .bar-container {
@@ -1642,31 +1741,210 @@ html, body, #root {
 }
 
 /* --------------------------------------------------------------------------
-   Responsive — mobile bottom-sheet approach
+   Responsive Design System — All Screen Types & Orientations
    -------------------------------------------------------------------------- */
+
+/* 1. Large Monitors & Ultra-wide (>= 1920px) ------------------------------ */
+@media (min-width: 1920px) {
+  .header-bar,
+  .footer-layout {
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+
+  .controls-panel {
+    width: 340px;
+  }
+
+  .planet-detail-panel {
+    width: 380px;
+  }
+}
+
+/* 2. Tablets & Small Laptops (769px to 1024px) --------------------------- */
+@media (max-width: 1024px) {
+  .ui-layer {
+    padding: max(0.85rem, env(safe-area-inset-top, 0.85rem)) max(1rem, env(safe-area-inset-right, 1rem)) max(0.85rem, env(safe-area-inset-bottom, 0.85rem)) max(1rem, env(safe-area-inset-left, 1rem));
+  }
+
+  .header-bar {
+    gap: 0.75rem;
+  }
+
+  .header-right-actions {
+    gap: 0.5rem;
+  }
+
+  .utility-btn {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.74rem;
+  }
+
+  .footer-layout {
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .controls-panel {
+    width: 280px;
+    max-width: 45vw;
+  }
+
+  .planet-detail-panel {
+    width: 320px;
+    max-width: 48vw;
+    max-height: 72vh;
+    overflow-y: auto;
+  }
+}
+
+/* 3. Tablet Portrait & Large Mobile (<= 768px) --------------------------- */
 @media (max-width: 768px) {
   .ui-layer {
-    padding: 1rem;
+    padding: max(0.65rem, env(safe-area-inset-top, 0.65rem)) max(0.75rem, env(safe-area-inset-right, 0.75rem)) max(0.65rem, env(safe-area-inset-bottom, 0.65rem)) max(0.75rem, env(safe-area-inset-left, 0.75rem));
+  }
+
+  /* Header adjustments */
+  .header-bar {
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .brand-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .brand-title {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .header-right-actions {
+    gap: 0.4rem;
+  }
+
+  .controls-mobile-date {
+    display: inline-block;
+  }
+
+  /* Footer Layout — Stacks gracefully with controls docking at bottom */
+  .footer-layout {
+    flex-direction: column-reverse;
+    gap: 0.65rem;
+    width: 100%;
+    align-items: stretch;
   }
 
   .controls-panel {
     width: 100%;
-    max-width: none;
+    max-width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
   }
 
-  .footer-layout {
-    flex-direction: column;
-    gap: 0.75rem;
+  /* Hide mouse instructions and educational disclaimer on touch/mobile to save screen */
+  .controls-panel .nav-controls,
+  .controls-panel .disclaimer {
+    display: none;
   }
 
+  .controls-panel.collapsed {
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Planet Detail Panel — Mobile bottom sheet card */
   .planet-detail-panel {
     width: 100%;
-    max-width: none;
+    max-width: 100%;
+    max-height: 52vh;
+    max-height: calc(100dvh - 160px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.9rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .panel-planet-name {
+    font-size: 1.2rem;
+  }
+
+  .panel-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .panel-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .panel-tab {
+    flex-shrink: 0;
+  }
+
+  /* Sticky actions so Focus and Reset View are never cut off */
+  .panel-actions {
+    position: sticky;
+    bottom: -0.9rem;
+    margin-top: 0.65rem;
+    padding: 0.5rem 0 0.25rem 0;
+    background: linear-gradient(to top, rgba(9, 14, 22, 0.98) 75%, transparent);
+    z-index: 5;
+  }
+
+  /* Modals */
+  .search-backdrop {
+    padding: 0.75rem;
+    padding-top: max(1.5rem, env(safe-area-inset-top, 1.5rem));
+    align-items: flex-start;
+  }
+
+  .search-dialog {
+    width: 100%;
+    max-width: 100%;
+    max-height: 75vh;
+  }
+
+  .search-input {
+    font-size: 16px; /* Prevents auto-zoom in iOS Safari */
+  }
+
+  .search-kbd-hint {
+    display: none;
+  }
+
+  .settings-dialog {
+    width: 100%;
+    max-width: 100%;
+    max-height: 82vh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .comparison-overlay {
+    padding: 0.75rem;
+  }
+
+  .comparison-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 85vh;
+    padding: 1rem;
   }
 
   .selector-grid {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .vs-badge {
@@ -1675,15 +1953,194 @@ html, body, #root {
 
   .table-header-row,
   .table-row {
-    grid-template-columns: 1fr 90px 1fr;
+    grid-template-columns: 1fr 85px 1fr;
     font-size: 0.72rem;
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+/* 4. Standard Mobile Phones (<= 640px) ------------------------------------ */
+@media (max-width: 640px) {
+  /* Header button text hidden — sleek icon toolbar */
+  .utility-btn .btn-label {
+    display: none;
   }
 
-  .comparison-modal {
-    padding: 1rem;
+  .utility-btn {
+    padding: 0.45rem;
+    min-width: 36px;
+    height: 36px;
+    justify-content: center;
+  }
+
+  .utility-btn svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.85;
+  }
+
+  /* Compact Scale Badge */
+  .scale-badge {
+    padding: 0.45rem 0.6rem;
+    height: 36px;
+  }
+
+  .scale-badge .scale-text {
+    font-size: 0.62rem;
+  }
+
+  /* Date is shown in Timeline panel header, hide duplicate in header */
+  .header-right-actions .date-display {
+    display: none;
+  }
+
+  .speed-selector {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .speed-pills {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .pill-btn {
+    padding: 0.25rem 0.45rem;
+  }
+}
+
+/* 5. Small Mobile Phones (<= 480px, e.g. 360px - 390px) ------------------- */
+@media (max-width: 480px) {
+  .ui-layer {
+    padding: max(0.5rem, env(safe-area-inset-top, 0.5rem)) max(0.5rem, env(safe-area-inset-right, 0.5rem)) max(0.5rem, env(safe-area-inset-bottom, 0.5rem)) max(0.5rem, env(safe-area-inset-left, 0.5rem));
+  }
+
+  .header-bar {
+    gap: 0.35rem;
   }
 
   .header-right-actions {
-    gap: 0.5rem;
+    gap: 0.3rem;
+  }
+
+  .brand-logo {
+    width: 26px;
+    height: 26px;
+  }
+
+  .brand-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+  }
+
+  .scale-badge {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+  }
+
+  .scale-badge .scale-text {
+    display: none;
+  }
+
+  .panel-stats {
+    gap: 0.35rem 0.5rem;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .stat-item {
+    min-width: 70px;
+  }
+
+  .stat-value {
+    font-size: 0.78rem;
+  }
+
+  .stat-label {
+    font-size: 0.56rem;
+  }
+
+  .panel-tab {
+    font-size: 0.66rem;
+    padding: 0.22rem 0.38rem;
+  }
+
+  .metric-row {
+    font-size: 0.72rem;
+  }
+
+  .metric-label {
+    font-size: 0.66rem;
+  }
+
+  .metric-value {
+    font-size: 0.72rem;
+  }
+
+  .table-header-row,
+  .table-row {
+    grid-template-columns: 1fr 70px 1fr;
+    font-size: 0.68rem;
+    padding: 0.3rem 0.35rem;
+  }
+
+  .bar-container {
+    max-width: 55px;
+  }
+
+  .header-col {
+    font-size: 0.72rem;
+  }
+
+  .setting-group {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .segment-btn {
+    font-size: 0.68rem;
+    padding: 0.35rem;
   }
 }
+
+/* 6. Landscape Viewport on Mobile Devices (<= 500px height) --------------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .ui-layer {
+    padding: max(0.4rem, env(safe-area-inset-top, 0.4rem)) max(0.75rem, env(safe-area-inset-right, 0.75rem)) max(0.4rem, env(safe-area-inset-bottom, 0.4rem)) max(0.75rem, env(safe-area-inset-left, 0.75rem));
+  }
+
+  .brand-logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .footer-layout {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .controls-panel {
+    width: 260px;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+
+  .planet-detail-panel {
+    width: 300px;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+
+  .search-dialog,
+  .settings-dialog,
+  .comparison-modal {
+    max-height: 88vh;
+  }
+}
+
