@@ -389,9 +389,15 @@ html, body, #root {
   border-color: rgba(143, 216, 255, 0.35);
 }
 
-.mini-slider {
-  flex: 1;
-  min-width: 70px;
+.mini-speed-badge {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(143, 216, 255, 0.12);
+  border: 1px solid rgba(143, 216, 255, 0.25);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
 }
 
 .mini-days {

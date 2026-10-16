@@ -12,7 +12,7 @@ const SimulationContext = createContext<SimulationContextValue | null>(null);
 
 export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [speed, setSpeedState] = useState<number>(10); // Default 10 simulated days per second
+  const [speed, setSpeedState] = useState<number>(1); // Default 1 simulated day per second (1x)
   const [simulatedDays, setSimulatedDaysState] = useState<number>(0);
   const [resetSignal, setResetSignal] = useState<number>(0);
   const [scaleMode, setScaleMode] = useState<ScaleMode>('visual'); // Visual vs Real scale (§24)

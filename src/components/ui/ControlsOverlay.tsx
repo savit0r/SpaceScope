@@ -6,9 +6,6 @@ import {
   Video,
   Scale,
   Clock,
-  MousePointer,
-  Move,
-  ZoomIn,
   Search,
   Settings,
   Disc,
@@ -34,7 +31,6 @@ export const ControlsOverlay: React.FC = () => {
     setShowAsteroids,
     togglePlay,
     setSpeed,
-    setSimulatedDays,
     resetSimulation,
   } = useSimulation();
 
@@ -45,7 +41,7 @@ export const ControlsOverlay: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
 
-  const speedOptions = [1, 5, 10, 30, 60];
+  const speedOptions = [1, 10, 30];
   const currentDate = simulatedDaysToDate(simulatedDays);
 
   const [prevSelectedPlanetId, setPrevSelectedPlanetId] = useState<string | null>(null);
@@ -181,38 +177,11 @@ export const ControlsOverlay: React.FC = () => {
               >
                 {isPlaying ? <Pause size={13} /> : <Play size={13} />}
               </button>
-              <input
-                type="range"
-                min={0}
-                max={1825}
-                step={1}
-                value={Math.round(simulatedDays)}
-                onChange={(e) => setSimulatedDays(Number(e.target.value))}
-                className="timeline-slider mini-slider"
-                aria-label="Timeline scrubber"
-              />
+              <span className="mini-speed-badge">{speed}×</span>
               <span className="mini-days">+{Math.round(simulatedDays)}d</span>
             </div>
           ) : (
             <div className="controls-panel-body">
-              {/* Timeline Scrubber */}
-              <div className="timeline-scrubber">
-                <div className="scrubber-header">
-                  <span className="scrubber-label">5-Year Range</span>
-                  <span className="scrubber-days">+{Math.round(simulatedDays)}d</span>
-                </div>
-                <input
-                  type="range"
-                  min={0}
-                  max={1825}
-                  step={1}
-                  value={Math.round(simulatedDays)}
-                  onChange={(e) => setSimulatedDays(Number(e.target.value))}
-                  className="timeline-slider"
-                  aria-label="Timeline scrubber"
-                />
-              </div>
-
               {/* Play / Pause / Reset */}
               <div className="btn-group">
                 <button
@@ -258,31 +227,6 @@ export const ControlsOverlay: React.FC = () => {
                 <Video />
                 Reset View
               </button>
-
-              {/* Navigation hints */}
-              <div className="nav-controls">
-                <span className="nav-controls-title">Navigation</span>
-                <div className="controls-list">
-                  <div className="control-item">
-                    <span className="control-key">
-                      <MousePointer /> Click Planet
-                    </span>
-                    <span className="control-action">Select</span>
-                  </div>
-                  <div className="control-item">
-                    <span className="control-key">
-                      <Move /> Drag
-                    </span>
-                    <span className="control-action">Orbit</span>
-                  </div>
-                  <div className="control-item">
-                    <span className="control-key">
-                      <ZoomIn /> Scroll
-                    </span>
-                    <span className="control-action">Zoom</span>
-                  </div>
-                </div>
-              </div>
 
               <div className="disclaimer">
                 Educational Model — Circular Keplerian Mean Anomaly
